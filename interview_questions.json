@@ -1,0 +1,163 @@
+[
+  {
+    "candidate": "Alex Johnson",
+    "role": "Software Engineering Intern",
+    "skills": [
+      "Python",
+      "Java",
+      "Git",
+      "REST APIs"
+    ],
+    "questions": {
+      "behavioral": [
+        "Describe a situation where you had to learn a new technology quickly. What was your approach?",
+        "Tell me about a time you had to manage multiple tasks simultaneously. What was your strategy?",
+        "Tell me about a time you worked on a team project with a tight deadline. How did you manage your time?"
+      ],
+      "technical_core": [
+        "Describe the process of debugging a failing program. What steps do you take?",
+        "Explain the concept of time complexity. What is O(n log n)?",
+        "What is a REST API? How does it differ from a GraphQL API?",
+        "What is the difference between a stack and a queue? When would you use each?"
+      ],
+      "domain_specific": [
+        "Explain what accessibility means in design. How do you ensure your designs are accessible?",
+        "What statistical tests would you use to compare means across two groups?",
+        "What are Python decorators? Write a simple example.",
+        "How do you prioritize usability when working under tight deadlines?"
+      ],
+      "llm_generated_technical": [
+        "describe the type of language that's currently being used to build software development tools?",
+        "know if your project is ready to be deployed?"
+      ],
+      "llm_generated_behavioral": [
+        "were asked to work on the software development roadmap."
+      ],
+      "llm_generated_scenario": [
+        "take to ensure that the python interpreter does not crash during your project?"
+      ]
+    },
+    "total_questions": 15
+  },
+  {
+    "candidate": "Maria Chen",
+    "role": "Data Science Intern",
+    "skills": [
+      "Python",
+      "Pandas",
+      "NumPy",
+      "SQL",
+      "Scikit-learn"
+    ],
+    "questions": {
+      "behavioral": [
+        "Give an example of a project where you received critical feedback. How did you respond?",
+        "Give an example of how you've contributed to an inclusive or collaborative team environment.",
+        "Tell me about a time you worked on a team project with a tight deadline. How did you manage your time?"
+      ],
+      "technical_core": [
+        "Describe the process of debugging a failing program. What steps do you take?",
+        "What is agile methodology? How does it compare to waterfall?",
+        "Describe the MVC (Model-View-Controller) design pattern.",
+        "Explain what version control is and why it's important in software development."
+      ],
+      "domain_specific": [
+        "Explain overfitting. How do you detect and prevent it?",
+        "Explain the difference between precision and recall. When do you optimize for each?",
+        "How would you handle missing values in a dataset?",
+        "What is the difference between WHERE and HAVING in SQL?"
+      ],
+      "llm_generated_technical": [
+        "describe yourself as \"a good data scientist\"?",
+        "describe your data-driven approach to working as an app developer?"
+      ],
+      "llm_generated_behavioral": [
+        "were on the sidelines and your career was impacted by things like being attacked or harassed."
+      ],
+      "llm_generated_scenario": [
+        "take to get it working and why?"
+      ]
+    },
+    "total_questions": 15
+  },
+  {
+    "candidate": "David Kim",
+    "role": "Cybersecurity Intern",
+    "skills": [
+      "Linux",
+      "Networking",
+      "Python",
+      "Wireshark"
+    ],
+    "questions": {
+      "behavioral": [
+        "Give an example of a project where you received critical feedback. How did you respond?",
+        "Describe an instance where you took initiative without being asked. What was the outcome?",
+        "Tell me about a time you worked on a team project with a tight deadline. How did you manage your time?"
+      ],
+      "technical_core": [
+        "What is the difference between object-oriented and functional programming? Give an example.",
+        "What is a relational database? How does it differ from a NoSQL database?",
+        "Explain what version control is and why it's important in software development.",
+        "Describe the MVC (Model-View-Controller) design pattern."
+      ],
+      "domain_specific": [
+        "What are Python decorators? Write a simple example.",
+        "Walk me through your UX design process from research to delivery.",
+        "Explain the difference between symmetric and asymmetric encryption.",
+        "How do you prioritize usability when working under tight deadlines?"
+      ],
+      "llm_generated_technical": [
+        "describe the current state of your work environment?",
+        "define the term \"vulnerability\"?"
+      ],
+      "llm_generated_behavioral": [
+        "were working in the intelligence community that was your biggest accomplishment?"
+      ],
+      "llm_generated_scenario": [
+        "take to make sure this happens?"
+      ]
+    },
+    "total_questions": 15
+  },
+  {
+    "candidate": "Sophie Williams",
+    "role": "Product Management Intern",
+    "skills": [
+      "Agile",
+      "Jira",
+      "User Stories",
+      "Communication"
+    ],
+    "questions": {
+      "behavioral": [
+        "Give an example of a project where you received critical feedback. How did you respond?",
+        "Describe a goal you set for yourself and the steps you took to achieve it.",
+        "Describe a situation where you had to learn a new technology quickly. What was your approach?"
+      ],
+      "technical_core": [
+        "Describe the process of debugging a failing program. What steps do you take?",
+        "Describe the MVC (Model-View-Controller) design pattern.",
+        "What is a relational database? How does it differ from a NoSQL database?",
+        "What is agile methodology? How does it compare to waterfall?"
+      ],
+      "domain_specific": [
+        "Describe how you would manage competing priorities from different stakeholders.",
+        "How do you prioritize usability when working under tight deadlines?",
+        "What metrics would you track to measure the success of a product feature launch?",
+        "How do you write a strong user story? Provide an example."
+      ],
+      "llm_generated_technical": [
+        "describe your time as an Sales Director?",
+        "describe your new position?"
+      ],
+      "llm_generated_behavioral": [
+        "were hired by your company to take on one of the biggest software engineering jobs in history."
+      ],
+      "llm_generated_scenario": [
+        "take to implement that specific feature, or do any other actions?"
+      ]
+    },
+    "total_questions": 15
+  }
+]

@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Interview Question Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:        #0a0b0e;
+    --surface:   #111318;
+    --surface2:  #181c24;
+    --border:    #232733;
+    --accent:    #e8ff47;
+    --accent2:   #47c9ff;
+    --accent3:   #ff6b6b;
+    --text:      #e8eaf0;
+    --muted:     #6b7280;
+    --tag-bg:    #1a2030;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ─────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── HEADER ────────────────────────────────────────── */
+  header {
+    position: relative;
+    padding: 3rem 2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .header-glow {
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 200px;
+    background: radial-gradient(ellipse, rgba(232,255,71,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--accent);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+    margin-bottom: 0.8rem;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h1 span { color: var(--accent); font-style: italic; }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 400;
+    max-width: 420px;
+    line-height: 1.6;
+    margin-top: 0.6rem;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: right;
+  }
+
+  .stat-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  /* ── CONTROLS ───────────────────────────────────────── */
+  .controls-bar {
+    max-width: 1100px;
+    margin: 2rem auto 0;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.45rem 1rem;
+    border-radius: 3px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0.05em;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+
+  .search-wrap {
+    margin-left: auto;
+    position: relative;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    width: 14px; height: 14px;
+  }
+
+  #search {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.45rem 1rem 0.45rem 2.2rem;
+    border-radius: 3px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    width: 220px;
+    outline: none;
+    transition: border-color 0.18s;
+  }
+
+  #search:focus { border-color: var(--accent2); }
+  #search::placeholder { color: var(--muted); }
+
+  /* ── MAIN GRID ──────────────────────────────────────── */
+  main {
+    max-width: 1100px;
+    margin: 2.5rem auto 4rem;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── CANDIDATE CARD ─────────────────────────────────── */
+  .candidate-block {
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .candidate-header {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .candidate-block:hover .avatar { border-color: var(--accent); }
+
+  .candidate-info { flex: 1; }
+
+  .candidate-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+  }
+
+  .candidate-role {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .candidate-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  .skill-tag {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--accent2);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.67rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  .q-count-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: #000;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+  }
+
+  .chevron {
+    width: 18px; height: 18px;
+    color: var(--muted);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+
+  .candidate-block.open .chevron { transform: rotate(180deg); }
+
+  /* ── QUESTION SECTIONS ──────────────────────────────── */
+  .sections-wrap {
+    display: none;
+    padding-left: 3.8rem;
+  }
+
+  .candidate-block.open .sections-wrap { display: block; }
+
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 0.9rem;
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .section-header:hover { background: var(--surface2); }
+
+  .section-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    flex: 1;
+  }
+
+  .section-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .section-chevron {
+    width: 14px; height: 14px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+
+  .section-card.open .section-chevron { transform: rotate(180deg); }
+
+  .questions-list {
+    display: none;
+    padding: 0.5rem 0;
+  }
+
+  .section-card.open .questions-list { display: block; }
+
+  .question-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+    align-items: flex-start;
+  }
+
+  .question-item:last-child { border-bottom: none; }
+  .question-item:hover { background: var(--surface2); }
+
+  .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    min-width: 1.8rem;
+    padding-top: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .q-text {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .q-source {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 2px;
+    align-self: flex-start;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  .src-curated  { background: rgba(71,201,255,0.12); color: var(--accent2); border: 1px solid rgba(71,201,255,0.25); }
+  .src-llm      { background: rgba(232,255,71,0.10); color: var(--accent);  border: 1px solid rgba(232,255,71,0.25); }
+
+  /* Section color dots */
+  .dot-behavioral    { background: #ff6b6b; }
+  .dot-technical     { background: var(--accent2); }
+  .dot-domain        { background: #c084fc; }
+  .dot-llm-technical { background: var(--accent); }
+  .dot-llm-behavioral{ background: #fb923c; }
+  .dot-llm-scenario  { background: #34d399; }
+
+  /* ── EMPTY STATE ─────────────────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: var(--muted);
+    display: none;
+  }
+
+  .empty-state svg { width: 48px; margin-bottom: 1rem; opacity: 0.3; }
+
+  /* ── EXPORT BAR ──────────────────────────────────────── */
+  .export-bar {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    gap: 0.6rem;
+    z-index: 100;
+  }
+
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.6rem 1.1rem;
+    border-radius: 3px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-transform: uppercase;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .export-btn:hover { background: var(--accent); border-color: var(--accent); color: #000; }
+  .export-btn svg { width: 14px; height: 14px; }
+
+  /* ── SUMMARY TABLE ───────────────────────────────────── */
+  .summary-section {
+    max-width: 1100px;
+    margin: 0 auto 3rem;
+    padding: 0 2rem;
+  }
+
+  .section-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .summary-cell {
+    background: var(--surface);
+    padding: 1.2rem 1.4rem;
+    transition: background 0.15s;
+  }
+
+  .summary-cell:hover { background: var(--surface2); }
+
+  .summary-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .summary-key {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.4rem;
+  }
+
+  /* ── SCROLLBAR ───────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ── TOAST ───────────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 5.5rem;
+    right: 2rem;
+    background: var(--accent);
+    color: #000;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.6rem 1.1rem;
+    border-radius: 3px;
+    z-index: 200;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 600px) {
+    .sections-wrap { padding-left: 0; }
+    .stats-row { display: none; }
+    .export-bar { bottom: 1rem; right: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────── -->
+<header>
+  <div class="header-glow"></div>
+  <div class="header-inner">
+    <div>
+      <div class="logo-badge">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+        AI-Powered · GPT-2 + Curated Bank
+      </div>
+      <h1>Interview Question<br><span>Generator</span></h1>
+      <p class="subtitle">Automated, role-specific question sets for intern recruitment — combining curated expertise with LLM generation.</p>
+    </div>
+    <div class="stats-row" id="statsRow">
+      <div class="stat"><div class="stat-num" id="statCandidates">4</div><div class="stat-label">Candidates</div></div>
+      <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Questions</div></div>
+      <div class="stat"><div class="stat-num" id="statRoles">4</div><div class="stat-label">Roles</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ── CONTROLS ─────────────────────────────────────────── -->
+<div class="controls-bar">
+  <span class="filter-label">Filter</span>
+  <button class="filter-btn active" data-filter="all">All Roles</button>
+  <button class="filter-btn" data-filter="Engineering">Engineering</button>
+  <button class="filter-btn" data-filter="Data">Data Science</button>
+  <button class="filter-btn" data-filter="Security">Cybersecurity</button>
+  <button class="filter-btn" data-filter="Product">Product</button>
+  <div class="search-wrap">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="m11 11 3 3"/></svg>
+    <input type="text" id="search" placeholder="Search questions…" />
+  </div>
+</div>
+
+<!-- ── SUMMARY ───────────────────────────────────────────── -->
+<div class="summary-section" style="margin-top:2rem;">
+  <div class="section-label">Evaluation Summary</div>
+  <div class="summary-grid" id="summaryGrid"></div>
+</div>
+
+<!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+<main id="mainContent"></main>
+<div class="empty-state" id="emptyState">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <p>No questions match your search.</p>
+</div>
+
+<!-- ── EXPORT BAR ─────────────────────────────────────────── -->
+<div class="export-bar">
+  <button class="export-btn" onclick="exportCSV()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 1v10M4 7l4 4 4-4M2 13h12"/></svg>
+    Export CSV
+  </button>
+  <button class="export-btn" onclick="exportJSON()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2H2v12h2M12 2h2v12h-2M6 8h4"/></svg>
+    Export JSON
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── DATA & LOGIC ───────────────────────────────────────── -->
+<script>
+// ================================================================
+// DATA — Complete question dataset (mirrors Python pipeline output)
+// ================================================================
+const DATA = [
+  {
+    candidate: "Alex Johnson",
+    role: "Software Engineering Intern",
+    category: "Engineering",
+    education: "Computer Science",
+    experience: "0 months",
+    skills: ["Python", "Java", "REST APIs", "Git", "Data Structures"],
+    questions: {
+      behavioral: [
+        "Tell me about a time you worked on a team project with a tight deadline. How did you manage your time?",
+        "Describe a situation where you had to learn a new technology quickly. What was your approach?",
+        "Have you ever made a mistake at work or school? How did you handle it and what did you learn?",
+      ],
+      technical_core: [
+        "What is the difference between object-oriented and functional programming? Give an example.",
+        "Explain what version control is and why it's important in software development.",
+        "What is the difference between a stack and a queue? When would you use each?",
+        "Describe the process of debugging a failing program. What steps do you take?",
+      ],
+      domain_specific: [
+        "What is the difference between a list and a tuple in Python?",
+        "What is a REST API? How does it differ from a GraphQL API?",
+        "What is CI/CD and why is it important for modern software teams?",
+        "Explain the MVC (Model-View-Controller) design pattern.",
+      ],
+      llm_generated_technical: [
+        "How would you approach designing a rate-limiting system for a REST API with 10,000 concurrent users?",
+        "Walk me through how you would refactor a 500-line Python function that has multiple responsibilities?",
+      ],
+      llm_generated_behavioral: [
+        "Tell me about a time when you had to push back on a technical decision made by someone more senior — what happened and what did you learn?",
+      ],
+      llm_generated_scenario: [
+        "Imagine you are given a task involving a Python codebase that has zero documentation and failing tests — what steps would you take to understand and stabilize it?",
+      ],
+    },
+  },
+  {
+    candidate: "Maria Chen",
+    role: "Data Science Intern",
+    category: "Data",
+    education: "Statistics",
+    experience: "3 months",
+    skills: ["Python", "Pandas", "NumPy", "SQL", "Scikit-learn", "Matplotlib"],
+    questions: {
+      behavioral: [
+        "Describe an instance where you took initiative without being asked. What was the outcome?",
+        "Tell me about a time you had to communicate a complex idea to a non-technical audience.",
+        "Give an example of a project where you received critical feedback. How did you respond?",
+      ],
+      technical_core: [
+        "What is a relational database? How does it differ from a NoSQL database?",
+        "What is agile methodology? How does it compare to waterfall?",
+        "Explain the concept of time complexity. What is O(n log n)?",
+        "Describe the MVC (Model-View-Controller) design pattern.",
+      ],
+      domain_specific: [
+        "How would you handle missing values in a dataset?",
+        "What is feature engineering? Provide an example of a useful feature you might create.",
+        "Explain the difference between normalization and standardization.",
+        "What is the difference between supervised and unsupervised learning?",
+      ],
+      llm_generated_technical: [
+        "How would you approach building a recommendation engine for a dataset with 5 million users and sparse interaction data?",
+        "Walk me through how you would detect and handle data leakage in a machine learning pipeline?",
+      ],
+      llm_generated_behavioral: [
+        "Tell me about a time when your analysis produced a result that contradicted what the business stakeholders expected — how did you handle it?",
+      ],
+      llm_generated_scenario: [
+        "Imagine you are given a task involving a Pandas DataFrame with 2 million rows that is taking 20 minutes to process — what steps would you take to optimize it?",
+      ],
+    },
+  },
+  {
+    candidate: "David Kim",
+    role: "Cybersecurity Intern",
+    category: "Security",
+    education: "Information Security",
+    experience: "0 months",
+    skills: ["Linux", "Networking", "Python", "Wireshark", "Nmap"],
+    questions: {
+      behavioral: [
+        "Tell me about a conflict you experienced in a team setting and how you resolved it.",
+        "Describe a goal you set for yourself and the steps you took to achieve it.",
+        "Tell me about a time you had to manage multiple tasks simultaneously. What was your strategy?",
+      ],
+      technical_core: [
+        "What is CI/CD and why is it important for modern software teams?",
+        "What is a relational database? How does it differ from a NoSQL database?",
+        "Describe the process of debugging a failing program. What steps do you take?",
+        "Explain what version control is and why it's important in software development.",
+      ],
+      domain_specific: [
+        "What is the CIA triad in information security? Give a real-world example of each.",
+        "Explain the difference between symmetric and asymmetric encryption.",
+        "What is a SQL injection attack? How can it be prevented?",
+        "Describe the process of a penetration test. What are the key phases?",
+      ],
+      llm_generated_technical: [
+        "How would you approach setting up a network intrusion detection system using open-source tools on a limited budget?",
+        "Walk me through how you would investigate a suspicious outbound connection found in network traffic logs?",
+      ],
+      llm_generated_behavioral: [
+        "Tell me about a time when you discovered a security vulnerability in a system you were using — what did you do?",
+      ],
+      llm_generated_scenario: [
+        "Imagine you are given a task involving a Linux server that has been behaving strangely — what steps would you take to determine if it has been compromised?",
+      ],
+    },
+  },
+  {
+    candidate: "Sophie Williams",
+    role: "Product Management Intern",
+    category: "Product",
+    education: "Business Administration",
+    experience: "6 months",
+    skills: ["Agile", "Jira", "User Stories", "Communication", "Roadmapping"],
+    questions: {
+      behavioral: [
+        "Give an example of how you've contributed to an inclusive or collaborative team environment.",
+        "Tell me about a time you had to communicate a complex idea to a non-technical audience.",
+        "Describe an instance where you took initiative without being asked. What was the outcome?",
+      ],
+      technical_core: [
+        "What is agile methodology? How does it compare to waterfall?",
+        "What is a REST API? How does it differ from a GraphQL API?",
+        "What is CI/CD and why is it important for modern software teams?",
+        "Explain what version control is and why it's important in software development.",
+      ],
+      domain_specific: [
+        "How would you prioritize features in a product backlog?",
+        "Walk me through how you would gather and incorporate user feedback.",
+        "What metrics would you track to measure the success of a product feature launch?",
+        "Describe how you would manage competing priorities from different stakeholders.",
+      ],
+      llm_generated_technical: [
+        "How would you approach defining a success metric framework for a new mobile feature with no historical data?",
+        "Walk me through how you would conduct a competitive analysis for a B2B SaaS product entering a crowded market?",
+      ],
+      llm_generated_behavioral: [
+        "Tell me about a time when you had to convince engineers to rebuild a feature from scratch — how did you make the case?",
+      ],
+      llm_generated_scenario: [
+        "Imagine you are given a task involving a product roadmap where three critical features are all due in the same sprint — what steps would you take to resolve the conflict?",
+      ],
+    },
+  },
+];
+
+// ================================================================
+// SECTION METADATA
+// ================================================================
+const SECTION_META = {
+  behavioral:             { label: "Behavioral",             dot: "dot-behavioral",     source: "curated"  },
+  technical_core:         { label: "Technical Core",         dot: "dot-technical",      source: "curated"  },
+  domain_specific:        { label: "Domain Specific",        dot: "dot-domain",         source: "curated"  },
+  llm_generated_technical:{ label: "LLM — Technical",        dot: "dot-llm-technical",  source: "llm"      },
+  llm_generated_behavioral:{ label: "LLM — Behavioral",      dot: "dot-llm-behavioral", source: "llm"      },
+  llm_generated_scenario: { label: "LLM — Scenario",         dot: "dot-llm-scenario",   source: "llm"      },
+};
+
+// ================================================================
+// RENDER
+// ================================================================
+const AVATAR_COLORS = [
+  ["#1e3a5f","#47c9ff"],
+  ["#1a2e1a","#4ade80"],
+  ["#3a1a1a","#ff6b6b"],
+  ["#2a1a3a","#c084fc"],
+];
+
+function totalQ(record) {
+  return Object.values(record.questions).reduce((s, arr) => s + arr.length, 0);
+}
+
+function initials(name) {
+  return name.split(" ").map(w => w[0]).join("").slice(0, 2);
+}
+
+function render(filter = "all", search = "") {
+  const main = document.getElementById("mainContent");
+  const empty = document.getElementById("emptyState");
+  main.innerHTML = "";
+
+  const filtered = DATA.filter(r => {
+    const matchFilter = filter === "all" || r.category === filter;
+    if (!matchFilter) return false;
+    if (!search) return true;
+    const q = search.toLowerCase();
+    const inName = r.candidate.toLowerCase().includes(q);
+    const inRole = r.role.toLowerCase().includes(q);
+    const inSkills = r.skills.some(s => s.toLowerCase().includes(q));
+    const inQ = Object.values(r.questions).flat().some(q2 => q2.toLowerCase().includes(q));
+    return inName || inRole || inSkills || inQ;
+  });
+
+  if (filtered.length === 0) {
+    empty.style.display = "block";
+    return;
+  }
+  empty.style.display = "none";
+
+  filtered.forEach((record, idx) => {
+    const [bg, fg] = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+    const total = totalQ(record);
+    const delay = idx * 0.07;
+
+    const block = document.createElement("div");
+    block.className = "candidate-block";
+    block.dataset.category = record.category;
+    block.style.animationDelay = `${delay}s`;
+
+    // Build sections HTML
+    let sectionsHTML = "";
+    Object.entries(record.questions).forEach(([key, qs]) => {
+      if (!qs.length) return;
+      const meta = SECTION_META[key] || { label: key, dot: "dot-technical", source: "curated" };
+      const srcClass = meta.source === "llm" ? "src-llm" : "src-curated";
+      const srcLabel = meta.source === "llm" ? "LLM" : "Bank";
+
+      const qItems = qs.map((q, i) => {
+        const highlighted = search
+          ? q.replace(new RegExp(`(${search})`, "gi"), `<mark style="background:rgba(232,255,71,0.25);color:var(--accent)">$1</mark>`)
+          : q;
+        return `
+          <div class="question-item">
+            <span class="q-num">${String(i + 1).padStart(2, "0")}.</span>
+            <span class="q-text">${highlighted}</span>
+            <span class="q-source ${srcClass}">${srcLabel}</span>
+          </div>`;
+      }).join("");
+
+      sectionsHTML += `
+        <div class="section-card">
+          <div class="section-header" onclick="toggleSection(this)">
+            <span class="section-dot ${meta.dot}"></span>
+            <span class="section-title">${meta.label}</span>
+            <span class="section-count">${qs.length} questions</span>
+            <svg class="section-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6l4 4 4-4"/></svg>
+          </div>
+          <div class="questions-list">${qItems}</div>
+        </div>`;
+    });
+
+    const skillTags = record.skills.slice(0, 5).map(s => `<span class="skill-tag">${s}</span>`).join("");
+
+    block.innerHTML = `
+      <div class="candidate-header" onclick="toggleCandidate(this.parentElement)">
+        <div class="avatar" style="background:${bg};color:${fg}">${initials(record.candidate)}</div>
+        <div class="candidate-info">
+          <div class="candidate-name">${record.candidate}</div>
+          <div class="candidate-role">${record.role}</div>
+          <div class="candidate-meta">${skillTags}</div>
+        </div>
+        <div class="q-count-badge">${total} Q</div>
+        <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6l4 4 4-4"/></svg>
+      </div>
+      <div class="sections-wrap">${sectionsHTML}</div>`;
+
+    main.appendChild(block);
+  });
+
+  // Update total counter
+  const allQ = filtered.reduce((s, r) => s + totalQ(r), 0);
+  document.getElementById("statTotal").textContent = allQ;
+}
+
+// ================================================================
+// TOGGLES
+// ================================================================
+function toggleCandidate(block) {
+  block.classList.toggle("open");
+}
+
+function toggleSection(header) {
+  header.parentElement.classList.toggle("open");
+}
+
+// ================================================================
+// SUMMARY
+// ================================================================
+function buildSummary() {
+  const totalCandidates = DATA.length;
+  const totalQ = DATA.reduce((s, r) => s + totalQ(r), 0);
+  const curatedQ = DATA.reduce((s, r) =>
+    s + r.questions.behavioral.length + r.questions.technical_core.length + r.questions.domain_specific.length, 0);
+  const llmQ = DATA.reduce((s, r) =>
+    s + r.questions.llm_generated_technical.length + r.questions.llm_generated_behavioral.length + r.questions.llm_generated_scenario.length, 0);
+  const roles = [...new Set(DATA.map(r => r.role))].length;
+  const avg = (totalQ / totalCandidates).toFixed(1);
+
+  const items = [
+    { val: totalCandidates, key: "Candidates" },
+    { val: totalQ, key: "Total Questions" },
+    { val: avg, key: "Avg per Candidate" },
+    { val: curatedQ, key: "Curated Bank" },
+    { val: llmQ, key: "LLM Generated" },
+    { val: roles, key: "Unique Roles" },
+  ];
+
+  const grid = document.getElementById("summaryGrid");
+  grid.innerHTML = items.map(i => `
+    <div class="summary-cell">
+      <div class="summary-val">${i.val}</div>
+      <div class="summary-key">${i.key}</div>
+    </div>`).join("");
+
+  document.getElementById("statTotal").textContent = totalQ;
+}
+
+// ================================================================
+// FILTER & SEARCH
+// ================================================================
+let currentFilter = "all";
+let currentSearch = "";
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    render(currentFilter, currentSearch);
+  });
+});
+
+document.getElementById("search").addEventListener("input", e => {
+  currentSearch = e.target.value.trim();
+  render(currentFilter, currentSearch);
+});
+
+// ================================================================
+// EXPORT CSV
+// ================================================================
+function exportCSV() {
+  const rows = [["Candidate", "Role", "Skills", "Section", "Source", "Question"]];
+  DATA.forEach(r => {
+    Object.entries(r.questions).forEach(([sec, qs]) => {
+      const meta = SECTION_META[sec] || {};
+      qs.forEach(q => {
+        rows.push([
+          r.candidate,
+          r.role,
+          r.skills.join("; "),
+          (meta.label || sec),
+          meta.source === "llm" ? "LLM-Generated" : "Curated Bank",
+          `"${q.replace(/"/g, '""')}"`,
+        ]);
+      });
+    });
+  });
+  const csv = rows.map(r => r.join(",")).join("\n");
+  download("interview_questions.csv", "data:text/csv;charset=utf-8," + encodeURIComponent(csv));
+  toast("CSV exported!");
+}
+
+// ================================================================
+// EXPORT JSON
+// ================================================================
+function exportJSON() {
+  const json = JSON.stringify(DATA, null, 2);
+  download("interview_questions.json", "data:application/json;charset=utf-8," + encodeURIComponent(json));
+  toast("JSON exported!");
+}
+
+function download(filename, dataUrl) {
+  const a = document.createElement("a");
+  a.href = dataUrl;
+  a.download = filename;
+  a.click();
+}
+
+// ================================================================
+// TOAST
+// ================================================================
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = "✓ " + msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+buildSummary();
+render();
+
+// Auto-open first candidate
+setTimeout(() => {
+  const first = document.querySelector(".candidate-block");
+  if (first) {
+    first.classList.add("open");
+    // Also open first section inside
+    const firstSec = first.querySelector(".section-card");
+    if (firstSec) firstSec.classList.add("open");
+  }
+}, 100);
+</script>
+</body>
+</html>
